@@ -1,0 +1,13 @@
+#!/usr/bin/env python3
+"""Shell wrapper to run commands in venv environment."""
+
+import sys
+from pathlib import Path
+from venv_runner import VenvRunner
+
+if __name__ == "__main__":
+    runner = VenvRunner(Path(__file__).parent)
+    if len(sys.argv) < 2:
+        print("Usage: ./shell <command> [args...]")
+        sys.exit(1)
+    sys.exit(runner.run_command(sys.argv[1:]))

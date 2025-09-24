@@ -1,0 +1,9 @@
+#!/usr/bin/env python3
+"""Test runner wrapper."""
+
+import sys
+from pathlib import Path
+from venv_runner import run_module_in_venv
+
+if __name__ == "__main__":
+    run_module_in_venv("pytest", Path(__file__).parent, sys.argv[1:])
