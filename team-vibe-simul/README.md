@@ -1,6 +1,6 @@
-# Accel-Vibe-Code
+# team-vibe-simul
 
-Python project for accelerometer vibration analysis with automated virtual environment management.
+Simulate the productivity gain of a human-machine collaborative software development team, by posing the problem as a constrained optimization.
 
 ## Quick Start
 
