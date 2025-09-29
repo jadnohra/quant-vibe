@@ -452,8 +452,8 @@ if __name__ == "__main__":
             f"[green]{nloc_reviewed_optimal:.0f}[/green]",
             f"[green]{optimal_mult:.1f}x[/green]",
             f"[green]{optimal_pct:.0f}%[/green]",
-            f"[green]{optimal_result['hours_human_coding']+optimal_result['hours_vibe_coding']:.1f}[/green]",
-            f"[green]{optimal_result['hours_reviewing_human']+optimal_result['hours_reviewing_vibe']:.1f}[/green]"
+            f"[green]{optimal_result['hours_human_coding']:.1f}/{optimal_result['hours_vibe_coding']:.1f}[/green]",
+            f"[green]{optimal_result['hours_reviewing_human']:.1f}/{optimal_result['hours_reviewing_vibe']:.1f}[/green]"
         )
         # Add breakdown rows
         results_table.add_row(
@@ -485,8 +485,8 @@ if __name__ == "__main__":
             f"[bright_magenta]{nloc_reviewed_optimal_perfect:.0f}[/bright_magenta]",
             f"[bright_magenta]{optimal_perfect_mult:.1f}x[/bright_magenta]",
             f"[bright_magenta]{optimal_perfect_pct:.0f}%[/bright_magenta]",
-            f"[bright_magenta]{optimal_perfect_result['hours_human_coding']+optimal_perfect_result['hours_vibe_coding']:.1f}[/bright_magenta]",
-            f"[bright_magenta]{optimal_perfect_result['hours_reviewing_human']+optimal_perfect_result['hours_reviewing_vibe']:.1f}[/bright_magenta]"
+            f"[bright_magenta]{optimal_perfect_result['hours_human_coding']:.1f}/{optimal_perfect_result['hours_vibe_coding']:.1f}[/bright_magenta]",
+            f"[bright_magenta]{optimal_perfect_result['hours_reviewing_human']:.1f}/{optimal_perfect_result['hours_reviewing_vibe']:.1f}[/bright_magenta]"
         )
         # Add breakdown rows
         results_table.add_row(
