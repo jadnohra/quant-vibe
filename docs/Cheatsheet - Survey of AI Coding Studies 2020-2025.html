@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Coding Studies Ranked by Scale: What the Data Shows</title>
+    <style id="themeStyles">
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        @page { 
+            margin: 10mm; 
+        }
+        
+        /* Theme Switcher Styles */
+        .theme-switcher {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            display: flex;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 5px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .theme-btn {
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            background: white;
+            cursor: pointer;
+            font-size: 10px;
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+        
+        .theme-btn:hover {
+            background: #f0f0f0;
+        }
+        
+        .theme-btn.active {
+            background: #4169e1;
+            color: white;
+            border-color: #4169e1;
+        }
+        
+        /* Base Layout (shared across themes) */
+        body {
+            font: 11px/1.3 -apple-system, BlinkMacSystemFont, 'SF Mono', monospace;
+            padding: 10px;
+            columns: 3;
+            column-gap: 16px;
+            column-rule: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+        
+        @media (max-width: 768px) {
+            body { columns: 1; }
+        }
+        
+        @media (min-width: 769px) and (max-width: 1024px) {
+            body { columns: 2; }
+        }
+        
+        @media (min-width: 1400px) {
+            body { columns: 4; }
+        }
+        
+        h1 {
+            font-size: 14px;
+            font-weight: 900;
+            margin: 0 0 8px 0;
+            column-span: all;
+            padding-bottom: 4px;
+            letter-spacing: -0.02em;
+        }
+        
+        h2 {
+            font-size: 11px;
+            font-weight: 800;
+            margin: 10px 0 4px 0;
+            padding: 3px 4px;
+            break-inside: avoid;
+        }
+        
+        p {
+            margin: 0 0 6px 0;
+            font-size: 10px;
+            text-align: justify;
+        }
+        
+        .stat-grid {
+            display: grid;
+            grid-template-columns: auto auto auto;
+            gap: 2px 6px;
+            margin: 3px 0;
+            font-size: 9px;
+            break-inside: avoid;
+            line-height: 1.15;
+        }
+        
+        .stat-label {
+            text-align: left;
+        }
+        
+        .stat-value {
+            text-align: right;
+            font-weight: 600;
+        }
+        
+        .impact {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            width: 16px;
+        }
+        
+        .high-conf, .med-conf, .low-conf { 
+            border-left: 2px solid var(--border-color);
+            padding-left: 4px;
+        }
+        
+        .small-text {
+            font-size: 8px;
+        }
+        
+        .confidence {
+            font-size: 7px;
+            font-style: italic;
+        }
+        
+        .critical-box, .warning-box, .good-box, .info-box {
+            padding: 4px 6px;
+            margin: 6px 0;
+            font-size: 9px;
+        }
+        
+        b {
+            font-weight: 700;
+        }
+        
+        a {
+            text-decoration: underline !important;
+        }
+        
+        h2 a {
+            display: block;
+            padding: 3px 4px;
+            text-decoration: underline !important;
+            border: none;
+        }
+        
+        /* Light Theme (Default) */
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #111;
+            --text-secondary: #222;
+            --text-muted: #333;
+            --border-color: #e0e0e0;
+            --bg-secondary: #f8f9fa;
+            --link-color: #111;
+            --link-underline: #999;
+            --h1-border: #e0e0e0;
+            --h2-bg: #f8f9fa;
+            --h2-color: #000;
+            
+            --critical: #c03028;
+            --severe: #d65f00;
+            --warning: #e08214;
+            --caution: #cc9900;
+            --good: #2e8b57;
+            --info: #4169e1;
+            --neutral: #404040;
+            
+            --stat-label: #000;
+            --small-text: #222;
+            --confidence-color: #333;
+            --box-bg: #f8f9fa;
+            
+            --shadow-text: none;
+            --shadow-box: none;
+        }
+        
+        /* Apply theme variables */
+        body {
+            background: var(--bg-color);
+            color: var(--text-color);
+        }
+        
+        h1 {
+            color: var(--text-color);
+            border-bottom: 1px solid var(--h1-border);
+            text-shadow: var(--shadow-text);
+        }
+        
+        h2 {
+            color: var(--h2-color);
+            background: var(--h2-bg);
+        }
+        
+        h2 a {
+            color: var(--h2-color) !important;
+        }
+        
+        h2 a:hover {
+            background: var(--border-color);
+        }
+        
+        p {
+            color: var(--text-secondary);
+        }
+        
+        .critical { color: var(--critical); font-weight: 600; text-shadow: var(--shadow-text); }
+        .severe { color: var(--severe); font-weight: 600; text-shadow: var(--shadow-text); }
+        .warning { color: var(--warning); font-weight: 600; text-shadow: var(--shadow-text); }
+        .caution { color: var(--caution); font-weight: 600; text-shadow: var(--shadow-text); }
+        .good { color: var(--good); font-weight: 600; text-shadow: var(--shadow-text); }
+        .info { color: var(--info); font-weight: 600; text-shadow: var(--shadow-text); }
+        .neutral { color: var(--neutral); font-weight: 600; }
+        
+        .stat-label { color: var(--stat-label); }
+        .stat-value { color: var(--text-color); }
+        
+        .impact-good { color: var(--good); text-shadow: var(--shadow-text); }
+        .impact-bad { color: var(--critical); text-shadow: var(--shadow-text); }
+        .impact-mixed { color: var(--warning); text-shadow: var(--shadow-text); }
+        .impact-neutral { color: var(--neutral); }
+        
+        .small-text { color: var(--small-text); }
+        .confidence { color: var(--confidence-color); }
+        
+        .critical-box, .warning-box, .good-box, .info-box {
+            background: var(--box-bg);
+            color: var(--text-color);
+            box-shadow: var(--shadow-box);
+        }
+        
+        b { color: var(--text-color); text-shadow: var(--shadow-text); }
+        
+        a {
+            color: var(--link-color) !important;
+            text-decoration-color: var(--link-underline) !important;
+        }
+        
+        a:hover {
+            color: var(--text-color) !important;
+            text-decoration-color: var(--text-color) !important;
+        }
+        
+        @media print {
+            body {
+                background: white;
+                color: #111;
+            }
+            
+            * {
+                text-shadow: none !important;
+                box-shadow: none !important;
+            }
+            
+            .theme-switcher {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="theme-switcher">
+    <button class="theme-btn active" onclick="setTheme('light')">Light</button>
+    <button class="theme-btn" onclick="setTheme('dark')">Dark</button>
+    <button class="theme-btn" onclick="setTheme('neon')">Neon</button>
+</div>
+
+<h1>SURVEY OF AI CODING STUDIES 2020-2025 (by <a href="https://www.linkedin.com/in/jadnohra/" target="_blank">Jad Nohra</a>)</h1>
+
+<div class="critical-box">
+<p><b>⚠️ CRITICAL: These studies become outdated rapidly.</b> AI models improve weekly. Studies from any date may not reflect current model performance. However, security vulnerabilities and code quality issues have remained consistent 2020-2025, suggesting some problems are systemic to the approach rather than model capability.</p>
+</div>
+
+<h2><a href="https://www.gitclear.com/coding_on_copilot_data_shows_ais_downward_pressure_on_code_quality" target="_blank">GITCLEAR 2020-2024: 211M LOC, 4 YEARS</a></h2>
+<div class="high-conf">
+<p class="small-text">Largest longitudinal study: 153M → 211M lines tracked industry-wide, not single company</p>
+<div class="stat-grid">
+    <span class="stat-label">Churn rate (reverted within 2 weeks)</span>
+    <span class="stat-value severe">2.1x increase</span>
+    <span class="impact impact-bad">✗</span>
+    <span class="stat-label">2021 baseline (pre-AI adoption)</span>
+    <span class="stat-value">3.3%</span>
+    <span class="impact impact-neutral">—</span>
+    <span class="stat-label">2024 measured</span>
+    <span class="stat-value critical">7.1%</span>
+    <span class="impact impact-bad">✗</span>
+    <span class="stat-label">Copy-paste (duplicate code %)</span>
+    <span class="stat-value severe">+48% in 3yr</span>
+    <span class="impact impact-bad">✗</span>
+    <span class="stat-label">Refactoring (code moved/reorganized)</span>
+    <span class="stat-value critical">-60% activity</span>
+    <span class="impact impact-bad">✗</span>
+    <span class="stat-label">5+ line duplicates (identical blocks)</span>
+    <span class="stat-value critical">8x increase</span>
+    <span class="impact impact-bad">✗</span>
+    <span class="stat-label">Commits w/ clones (contain duplicates)</span>
+    <span class="stat-value warning">10% by 2024</span>
+    <span class="impact impact-bad">✗</span>
+</div>
+<p><b>What this measures:</b> Long-term code quality metrics across industry. Churn = lines reverted or updated within 2 weeks of authoring. Technical debt compounds ~1.48x/year (48%÷3).</p>
+<p><b>Key finding:</b> First time copy-pasted lines exceeded moved lines in their measurement history. Authors note "disconcerting trends for maintainability."</p>
+</div>
+
+<h2><a href="https://arxiv.org/abs/2402.19009" target="_blank">MICROSOFT/ACCENTURE/FORTUNE 100 2025: 4,867 DEVS, 2-8 MONTHS</a></h2>
+<div class="high-conf">
+<p class="small-text">Largest RCT: 3 companies (Microsoft 1,521, Accenture 316, Fortune 100 3,030), GitHub telemetry</p>
+<div class="stat-grid">
+    <span class="stat-label">PRs completed (feature units)</span>
+    <span class="stat-value caution">+26.08%</span>
+    <span class="impact impact-good">✓</span>
+    <span class="stat-label">Statistical significance</span>
+    <span class="stat-value good">p<0.05</span>
+    <span class="impact impact-good">✓</span>
+    <span class="stat-label">Builds (compilation runs)</span>
+    <span class="stat-value caution">+38.38%</span>
+    <span class="impact impact-mixed">◐</span>
+    <span class="stat-label">Merge rate (PR acceptance %)</span>
+    <span class="stat-value caution">+15%</span>
+    <span class="impact impact-good">✓</span>
+    <span class="stat-label">Juniors (<2yr experience)</span>
+    <span class="stat-value good">+40% PRs</span>
+    <span class="impact impact-good">✓</span>
+    <span class="stat-label">Seniors (5+ yr experience)</span>
+    <span class="stat-value caution">+7% PRs</span>
+    <span class="impact impact-mixed">◐</span>
+    <span class="stat-label">Adoption rate (jr vs sr usage)</span>
+    <span class="stat-value info">81.6% vs 72.1%</span>
+    <span class="impact impact-neutral">—</span>
+    <span class="stat-label">Learning curve (weeks to plateau)</span>
+    <span class="stat-value warning">11 weeks</span>
+    <span class="impact impact-mixed">◐</span>
+    <span class="stat-label">Build success (% passing CI tests)</span>
+    <span class="stat-value neutral">-5.53% NS</span>
+    <span class="impact impact-bad">✗</span>
+</div>
+<p><b>What this measures:</b> Production work with optional AI usage. Developers self-selected when to use tools. Only 31% of sample had experience-level data.</p>
+<p><b>Authors claim:</b> "Turning 8-hour day into 10 hours of output" based on PR count increase.</p>
+</div>
+
+<h2><a href="https://www.uplevel.work/research-papers/github-copilot-productivity" target="_blank">UPLEVEL 2024: 800 DEVELOPERS, 26 DAYS</a></h2>
+<div class="med-conf">
+<p class="small-text">Short-term production study with Copilot adoption, real workplace metrics</p>
+<div class="stat-grid">
+    <span class="stat-label">Bug rate (defects per PR)</span>
+    <span class="stat-value severe">+41%</span>
+    <span class="impact impact-bad">✗</span>
+    <span class="stat-label">PR cycle time (submission to merge)</span>
+    <span class="stat-value neutral">No change</span>
+    <span class="impact impact-neutral">—</span>
+    <span class="stat-label">Throughput (PRs per developer)</span>
+    <span class="stat-value neutral">No change</span>
+    <span class="impact impact-neutral">—</span>
+    <span class="stat-label">Net change</span>
+    <span class="stat-value critical">More bugs, same speed</span>
+    <span class="impact impact-bad">✗</span>
+</div>
+<p><b>What this measures:</b> Initial adoption period in production environment. 26-day window captures early usage patterns.</p>
+<p><b>Contradicts:</b> GitHub's controlled study showing quality improvements.</p>
+</div>
+
+<h2><a href="https://www.fastly.com/blog/ai-adoption-developer-survey-2025" target="_blank">FASTLY 2025: 791 DEVELOPERS SURVEYED</a></h2>
+<div class="med-conf">
+<p class="small-text">Cross-sectional survey, July 2025, self-reported usage patterns</p>
+<div class="stat-grid">
+    <span class="stat-label">Seniors (>50% code AI-generated)</span>
+    <span class="stat-value info">32%</span>
+    <span class="impact impact-neutral">—</span>
+    <span class="stat-label">Juniors (>50% code AI-generated)</span>
+    <span class="stat-value info">13%</span>
+    <span class="impact impact-neutral">—</span>
+    <span class="stat-label">Usage ratio</span>
+    <span class="stat-value warning">2.5x sr:jr</span>
+    <span class="impact impact-mixed">◐</span>
+    <span class="stat-label">Seniors (time lost to fixes)</span>
+    <span class="stat-value warning">30% report</span>
+    <span class="impact impact-bad">✗</span>
+    <span class="stat-label">Juniors (time lost to fixes)</span>
+    <span class="stat-value caution">17% report</span>
+    <span class="impact impact-mixed">◐</span>
+</div>
+<p><b>What this measures:</b> Self-reported AI usage patterns by experience level. Perception-based, not measured.</p>
+<p><b>Pattern:</b> More experienced developers use AI more but also report more time fixing outputs.</p>
+</div>
+
+<h2><a href="https://arxiv.org/abs/2401.00812" target="_blank">CORNELL 2024: 452 GITHUB SNIPPETS ANALYZED</a></h2>
+<div class="med-conf">
+<p class="small-text">Production code marked Copilot-generated, passed human review, in repositories</p>
+<div class="stat-grid">
+    <span class="stat-label">With vulnerabilities (% of snippets)</span>
+    <span class="stat-value severe">29.6%</span>
+    <span class="impact impact-bad">✗</span>
+    <span class="stat-label">Total vulnerabilities</span>
+    <span class="stat-value">544</span>
+    <span class="impact impact-bad">✗</span>
+    <span class="stat-label">Distinct CWE types</span>
+    <span class="stat-value warning">38</span>
+    <span class="impact impact-bad">✗</span>
+    <span class="stat-label">Python (% vulnerable)</span>
+    <span class="stat-value severe">32.8%</span>
+    <span class="impact impact-bad">✗</span>
+    <span class="stat-label">JavaScript (% vulnerable)</span>
+    <span class="stat-value warning">24.5%</span>
+    <span class="impact impact-bad">✗</span>
+    <span class="stat-label">In CWE Top-25 (% of vulns)</span>
+    <span class="stat-value critical">40.1%</span>
+    <span class="impact impact-bad">✗</span>
+</div>
+<p><b>What this measures:</b> Vulnerabilities in production code after passing human review. Real-world deployment rate.</p>
+<p><b>Most common:</b> Insufficient random values (23.3%), improper code generation (21.1%), OS command injection (14.9%).</p>
+</div>
+
+<h2><a href="https://sloanreview.mit.edu/article/why-ai-projects-fail/" target="_blank">MIT 2025: 150 LEADERS, 300 DEPLOYMENTS</a></h2>
+<div class="high-conf">
+<p class="small-text">Enterprise adoption study, interview-based, business metrics focus</p>
+<div class="stat-grid">
+    <span class="stat-label">Achieving rapid ROI (revenue/profit gain)</span>
+    <span class="stat-value critical">5%</span>
+    <span class="impact impact-bad">✗</span>
+    <span class="stat-label">No measurable value (failed pilots)</span>
+    <span class="stat-value critical">95%</span>
+    <span class="impact impact-bad">✗</span>
+    <span class="stat-label">Abandoning initiatives (current rate)</span>
+    <span class="stat-value severe">42%</span>
+    <span class="impact impact-bad">✗</span>
+    <span class="stat-label">Previous year (2024 rate)</span>
+    <span class="stat-value warning">17%</span>
+    <span class="impact impact-neutral">—</span>
+    <span class="stat-label">Year-over-year increase (abandonment)</span>
+    <span class="stat-value critical">2.5x</span>
+    <span class="impact impact-bad">✗</span>
+</div>
+<p><b>What this measures:</b> Business outcomes vs technical metrics. ROI = return on investment measured by revenue or profit impact, not velocity.</p>
+<p><b>Finding:</b> Technical improvements (more PRs, faster coding) don't translate to business value (revenue, cost savings).</p>
+</div>
+
+<h2><a href="https://www.veracode.com/blog/research/real-world-analysis-ai-generated-code-security" target="_blank">VERACODE 2025: 100+ LLMS, 80 TASKS</a></h2>
+<div class="high-conf">
+<p class="small-text">Comprehensive security testing across all major models and sizes</p>
+<div class="stat-grid">
+    <span class="stat-label">Pass rate (% generating secure code)</span>
+    <span class="stat-value critical">55%</span>
+    <span class="impact impact-bad">✗</span>
+    <span class="stat-label">Log injection (CWE-117 vulnerability)</span>
+    <span class="stat-value critical">88% fail</span>
+    <span class="impact impact-bad">✗</span>
+    <span class="stat-label">XSS (cross-site scripting, CWE-79)</span>
+    <span class="stat-value critical">86% fail</span>
+    <span class="impact impact-bad">✗</span>
+    <span class="stat-label">Java (% passing security tests)</span>
+    <span class="stat-value critical">28.5%</span>
+    <span class="impact impact-bad">✗</span>
+    <span class="stat-label">Python (% passing security tests)</span>
+    <span class="stat-value warning">61.7%</span>
+    <span class="impact impact-mixed">◐</span>
+    <span class="stat-label">Model size impact (on security)</span>
+    <span class="stat-value critical">None</span>
+    <span class="impact impact-bad">✗</span>
+    <span class="stat-label">Improvement 2023-2025</span>
+    <span class="stat-value critical">0%</span>
+    <span class="impact impact-bad">✗</span>
+</div>
+<p><b>What this measures:</b> Systematic failures across all models. Size doesn't help (training data issue). Stack Overflow lacks security context = models can't learn it.</p>
+<p><b>Pattern:</b> Syntax improved >90% since 2023, security stuck at 55%.</p>
+</div>
+
+<h2><a href="https://github.blog/news-insights/research/github-copilot-research-quantifying-productivity/" target="_blank">GITHUB 2022: 95 DEVELOPERS, SINGLE TASK</a></h2>
+<div class="high-conf">
+<p class="small-text">Most-cited study: Controlled experiment, HTTP server, clean environment</p>
+<div class="stat-grid">
+    <span class="stat-label">With Copilot (minutes)</span>
+    <span class="stat-value good">71</span>
+    <span class="impact impact-good">✓</span>
+    <span class="stat-label">Without (minutes)</span>
+    <span class="stat-value">161</span>
+    <span class="impact impact-neutral">—</span>
+    <span class="stat-label">Speed gain (best case)</span>
+    <span class="stat-value good">+55.8%</span>
+    <span class="impact impact-good">✓</span>
+    <span class="stat-label">Confidence interval</span>
+    <span class="stat-value">21-89%</span>
+    <span class="impact impact-neutral">—</span>
+    <span class="stat-label">Task complexity</span>
+    <span class="stat-value good">Simple</span>
+    <span class="impact impact-mixed">◐</span>
+    <span class="stat-label">Statistical significance</span>
+    <span class="stat-value good">p=0.0017</span>
+    <span class="impact impact-good">✓</span>
+</div>
+<p><b>What this measures:</b> AI's ceiling performance on ideal task. No legacy code, no dependencies, well-defined problem. This 55.8% is what vendors cite, least representative of real work.</p>
+</div>
+
+<h2><a href="https://www.mckinsey.com/capabilities/mckinsey-digital/our-insights/unleashing-developer-productivity-with-generative-ai" target="_blank">MCKINSEY 2023: 40+ DEVELOPERS, CONTROLLED</a></h2>
+<div class="med-conf">
+<p class="small-text">Task-specific testing, within-subjects design, US and Asia locations</p>
+<div class="stat-grid">
+    <span class="stat-label">Juniors <1yr (on complex tasks)</span>
+    <span class="stat-value critical">Slower</span>
+    <span class="impact impact-bad">✗</span>
+    <span class="stat-label">Documentation (writing specs/comments)</span>
+    <span class="stat-value good">+45-50%</span>
+    <span class="impact impact-good">✓</span>
+    <span class="stat-label">Refactoring (code reorganization)</span>
+    <span class="stat-value good">+66%</span>
+    <span class="impact impact-good">✓</span>
+    <span class="stat-label">Code generation (new features)</span>
+    <span class="stat-value good">+35-45%</span>
+    <span class="impact impact-good">✓</span>
+    <span class="stat-label">Complex unfamiliar (new frameworks)</span>
+    <span class="stat-value caution"><10%</span>
+    <span class="impact impact-bad">✗</span>
+    <span class="stat-label">Developer happiness (self-reported)</span>
+    <span class="stat-value info">2x higher</span>
+    <span class="impact impact-good">✓</span>
+</div>
+<p><b>What this measures:</b> Task-specific performance variations. Pattern-matching tasks vs understanding-required tasks.</p>
+<p><b>Key finding:</b> Juniors need "foundational programming principles" training before AI helps.</p>
+</div>
+
+<h2><a href="https://metr.org/blog/2025-07-01-cursor-benchmark/" target="_blank">METR 2025: 16 EXPERTS, 246 TASKS</a></h2>
+<div class="high-conf">
+<p class="small-text">RCT design, real repos (22k+ stars, 1M+ LOC), experienced developers (avg 5yr on project, 1500+ commits)</p>
+<div class="stat-grid">
+    <span class="stat-label">Predicted (pre-task estimate)</span>
+    <span class="stat-value warning">+24%</span>
+    <span class="impact impact-neutral">—</span>
+    <span class="stat-label">Believed (post-task perception)</span>
+    <span class="stat-value warning">+20%</span>
+    <span class="impact impact-neutral">—</span>
+    <span class="stat-label">Actual (screen-recorded time)</span>
+    <span class="stat-value critical">-19%</span>
+    <span class="impact impact-bad">✗</span>
+    <span class="stat-label">Perception-reality gap</span>
+    <span class="stat-value severe">39 points</span>
+    <span class="impact impact-bad">✗</span>
+    <span class="stat-label">Accept rate (% suggestions used)</span>
+    <span class="stat-value warning">44%</span>
+    <span class="impact impact-mixed">◐</span>
+    <span class="stat-label">Modified (% needing changes)</span>
+    <span class="stat-value severe">56%</span>
+    <span class="impact impact-bad">✗</span>
+    <span class="stat-label">Review behavior (% of developers)</span>
+    <span class="stat-value warning">75% read all</span>
+    <span class="impact impact-mixed">◐</span>
+    <span class="stat-label">Cleanup time (% of total time)</span>
+    <span class="stat-value warning">~9%</span>
+    <span class="impact impact-bad">✗</span>
+</div>
+<p><b>What this measures:</b> Expert developers using AI in codebases they know deeply. Screen recordings captured actual time spent on tasks.</p>
+<p><b>Context:</b> Only 1/16 had >1 week Cursor experience. Economics experts predicted +39%, ML experts +38% gain.</p>
+</div>
+
+<h2><a href="https://dl.acm.org/doi/10.1145/3632620.3671098" target="_blank">ACM ICER 2024: 21 STUDENTS, EYE-TRACKING</a></h2>
+<div class="med-conf">
+<p class="small-text">Detailed observation study with eye-tracking, interviews, quality analysis</p>
+<div class="stat-grid">
+    <span class="stat-label">Completed tasks</span>
+    <span class="stat-value good">20/21</span>
+    <span class="impact impact-good">✓</span>
+    <span class="stat-label">Quality variance (between students)</span>
+    <span class="stat-value severe">Extreme</span>
+    <span class="impact impact-bad">✗</span>
+    <span class="stat-label">Strong students (impact)</span>
+    <span class="stat-value good">Accelerated</span>
+    <span class="impact impact-good">✓</span>
+    <span class="stat-label">Weak students (impact)</span>
+    <span class="stat-value critical">Hindered</span>
+    <span class="impact impact-bad">✗</span>
+    <span class="stat-label">Performance gap</span>
+    <span class="stat-value critical">Widened</span>
+    <span class="impact impact-bad">✗</span>
+</div>
+<p><b>What this measures:</b> Learning impacts on novice programmers. Eye-tracking revealed attention patterns.</p>
+<p><b>Key quote:</b> AI "compounds metacognitive difficulties" for struggling students, creates "illusion of competence."</p>
+</div>
+
+<h2><a href="https://arxiv.org/abs/2211.03622" target="_blank">STANFORD 2022: SECURITY EXPERIMENT</a></h2>
+<div class="high-conf">
+<p class="small-text">Controlled experiment measuring security quality and developer confidence</p>
+<div class="stat-grid">
+    <span class="stat-label">Code security (measured)</span>
+    <span class="stat-value critical">Decreased</span>
+    <span class="impact impact-bad">✗</span>
+    <span class="stat-label">Developer confidence (self-rated)</span>
+    <span class="stat-value warning">Increased</span>
+    <span class="impact impact-bad">✗</span>
+    <span class="stat-label">Direction mismatch</span>
+    <span class="stat-value severe">Opposite</span>
+    <span class="impact impact-bad">✗</span>
+</div>
+<p><b>What this measures:</b> Confidence-competence relationship when using AI. Objective security vs subjective confidence.</p>
+</div>
+
+<h2>DEVELOPER FORUMS 2024-2025</h2>
+<div class="warning-box">
+<p><b>Pseudonymous testimony (Reddit r/experienceddevs, HackerNews):</b></p>
+• "AI produces 80% in minutes, takes ages to fix duplicate code, bad design, bugs" (436 upvotes)<br/>
+• "Best suggestions = what linters catch. Is this what we've come to?" (HN top comment)<br/>
+• "Juniors ship faster but can't debug. Never debugged code they don't understand"<br/>
+• "Without Copilot: deer in syntax-shaped headlight" (dependency formed)<br/>
+• "The 70/30 problem: 70% quick, 30% takes longer than 100% from scratch"<br/>
+• "People overestimate because it's fun to use" (dopamine vs productivity)<br/>
+<p><b>What this measures:</b> Gap between public surveys (80-95% satisfaction) and pseudonymous forum discussions.</p>
+</div>
+
+<h2>THE PATTERN ACROSS 14 STUDIES</h2>
+<div class="info-box">
+• <b>Context matters more than tool:</b> GitHub's +55.8% (simple, isolated) vs METR's -19% (experts in familiar code) shows task-fit determines outcome<br/>
+• <b>Perception gap is consistent:</b> METR devs believed +20% faster while measuring -19% slower. Similar gaps appear across studies<br/>
+• <b>Experience creates paradox:</b> Juniors gain +21-40% on routine work but can't debug. Seniors use 2.5x more AI but spend 30% of gains fixing it<br/>
+• <b>Quality metrics diverge from speed:</b> +26% more PRs (Microsoft) while code churn doubles (GitClear) and bugs increase +41% (Uplevel)<br/>
+• <b>Security shows no learning:</b> 45% vulnerability rate unchanged 2020-2025 despite model improvements. Pattern suggests training data problem<br/>
+• <b>The 70/30 problem:</b> Developers report "70% done quickly, last 30% takes longer than writing 100% manually" (multiple forums)<br/>
+• <b>Skill atrophy reported widely:</b> "Can't code without Copilot" appears frequently. 89% of students encounter wrong information (ACM study)<br/>
+• <b>Business metrics disconnect:</b> Only 5% achieve ROI (MIT) despite technical metric improvements. 42% abandon initiatives within year<br/>
+</div>
+
+<script>
+    // Theme definitions
+    const themes = {
+        light: {
+            '--bg-color': '#ffffff',
+            '--text-color': '#111',
+            '--text-secondary': '#222',
+            '--text-muted': '#333',
+            '--border-color': '#e0e0e0',
+            '--bg-secondary': '#f8f9fa',
+            '--link-color': '#111',
+            '--link-underline': '#999',
+            '--h1-border': '#e0e0e0',
+            '--h2-bg': '#f8f9fa',
+            '--h2-color': '#000',
+            '--critical': '#c03028',
+            '--severe': '#d65f00',
+            '--warning': '#e08214',
+            '--caution': '#cc9900',
+            '--good': '#2e8b57',
+            '--info': '#4169e1',
+            '--neutral': '#404040',
+            '--stat-label': '#000',
+            '--small-text': '#222',
+            '--confidence-color': '#333',
+            '--box-bg': '#f8f9fa',
+            '--shadow-text': 'none',
+            '--shadow-box': 'none',
+            'switcher-bg': 'rgba(255, 255, 255, 0.9)'
+        },
+        dark: {
+            '--bg-color': '#0d0d0d',
+            '--text-color': '#e0e0e0',
+            '--text-secondary': '#d0d0d0',
+            '--text-muted': '#b0b0b0',
+            '--border-color': '#333',
+            '--bg-secondary': '#1a1a1a',
+            '--link-color': '#d0d0d0',
+            '--link-underline': '#666',
+            '--h1-border': '#444',
+            '--h2-bg': '#1a1a1a',
+            '--h2-color': '#f0f0f0',
+            '--critical': '#ff6b6b',
+            '--severe': '#ff9f43',
+            '--warning': '#feca57',
+            '--caution': '#f5cd79',
+            '--good': '#48dbfb',
+            '--info': '#667eea',
+            '--neutral': '#a0a0a0',
+            '--stat-label': '#b0b0b0',
+            '--small-text': '#999',
+            '--confidence-color': '#808080',
+            '--box-bg': '#1a1a1a',
+            '--shadow-text': 'none',
+            '--shadow-box': 'none',
+            'switcher-bg': 'rgba(0, 0, 0, 0.8)'
+        },
+        neon: {
+            '--bg-color': '#0a0a0f',
+            '--text-color': '#e0f7ff',
+            '--text-secondary': '#b8e7ff',
+            '--text-muted': '#8899ff',
+            '--border-color': '#ff00ff33',
+            '--bg-secondary': 'linear-gradient(90deg, #ff00ff22, transparent)',
+            '--link-color': '#00ffff',
+            '--link-underline': '#00ffff66',
+            '--h1-border': '#00ffff',
+            '--h2-bg': 'linear-gradient(90deg, #ff00ff22, transparent)',
+            '--h2-color': '#ff00ff',
+            '--critical': '#ff0066',
+            '--severe': '#ff6600',
+            '--warning': '#ffff00',
+            '--caution': '#ffcc00',
+            '--good': '#00ff88',
+            '--info': '#00ccff',
+            '--neutral': '#9999ff',
+            '--stat-label': '#8899ff',
+            '--small-text': '#8899ff',
+            '--confidence-color': '#6677ff',
+            '--box-bg': 'linear-gradient(135deg, #ff006622, #ff006611)',
+            '--shadow-text': '0 0 8px currentColor',
+            '--shadow-box': '0 0 10px #ff006633',
+            'switcher-bg': 'rgba(0, 0, 0, 0.9)'
+        }
+    };
+    
+    // Get saved theme or default to light
+    let currentTheme = localStorage.getItem('preferredTheme') || 'light';
+    
+    // Apply theme
+    function setTheme(themeName) {
+        const theme = themes[themeName];
+        if (!theme) return;
+        
+        // Update CSS variables
+        const root = document.documentElement;
+        for (const [key, value] of Object.entries(theme)) {
+            if (key.startsWith('--')) {
+                root.style.setProperty(key, value);
+            }
+        }
+        
+        // Update switcher style
+        const switcher = document.querySelector('.theme-switcher');
+        if (theme['switcher-bg']) {
+            switcher.style.background = theme['switcher-bg'];
+        }
+        
+        // Update active button
+        document.querySelectorAll('.theme-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+        
+        // Save preference
+        localStorage.setItem('preferredTheme', themeName);
+        currentTheme = themeName;
+    }
+    
+    // Apply saved theme on load
+    document.addEventListener('DOMContentLoaded', () => {
+        if (currentTheme !== 'light') {
+            const theme = themes[currentTheme];
+            const root = document.documentElement;
+            for (const [key, value] of Object.entries(theme)) {
+                if (key.startsWith('--')) {
+                    root.style.setProperty(key, value);
+                }
+            }
+            
+            // Update switcher
+            const switcher = document.querySelector('.theme-switcher');
+            if (theme['switcher-bg']) {
+                switcher.style.background = theme['switcher-bg'];
+            }
+            
+            // Update active button
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.toLowerCase() === currentTheme) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
