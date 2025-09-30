@@ -1,4 +1,4 @@
-# quant-vibe
+# quantvibe
 Quantify the impact of AI coding assistants.
 
 ## [Survey of AI Coding Studies 2020-2025](https://htmlpreview.github.io/?https://github.com/jadnohra/quant-vibe/blob/main/docs/Cheatsheet%20-%20Survey%20of%20AI%20Coding%20Studies%202020-2025.html)
